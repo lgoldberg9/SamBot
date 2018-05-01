@@ -15,7 +15,7 @@ def send_message(message):
     print(bot_template.format(response))
 
 
-name = "Greg"
+name = "Sam Rebelsky"
 weather = "cloudy"
 
 # Define a dictionary with the predefined responses
