@@ -173,6 +173,10 @@ def compute_coherence_values(dictionary, corpus, texts, limit, start=2, step=3):
 # Can take a long time to run.
 model_list, coherence_values = compute_coherence_values(dictionary=id2word, corpus=corpus, texts=data_lemmatized, start=2, limit=40, step=6)
 
+# Show graph
+limit=40; start=2; step=6;
+x = range(start, limit, step)
+
 # Print the coherence scores
 for m, cv in zip(x, coherence_values):
     print("Num Topics =", m, " has Coherence Value of", round(cv, 4))
