@@ -139,6 +139,11 @@ coherence_model_lda = CoherenceModel(model=lda_model, texts=data_lemmatized, dic
 coherence_lda = coherence_model_lda.get_coherence()
 print('\nCoherence Score: ', coherence_lda)
 
+# Generate mallet topic
+mallet_path = '../mallet-2.0.8/bin/mallet' # update this path
+ldamallet = gensim.models.wrappers.LdaMallet(mallet_path, corpus=corpus, num_topics=20, id2word=id2word)
+
+
 def compute_coherence_values(dictionary, corpus, texts, limit, start=2, step=3):
     """
     Compute c_v coherence for various number of topics
@@ -208,9 +213,6 @@ df_dominant_topic.columns = ['Document_No', 'Dominant_Topic', 'Topic_Perc_Contri
 
 # Show
 df_dominant_topic.head(10)
-
-# Generate mallet topic
-ldamallet = gensim.models.wrappers.LdaMallet(mallet_path, corpus=corpus, num_topics=20, id2word=id2word)
 
 # Group top 5 sentences under each topic
 sent_topics_sorteddf_mallet = pd.DataFrame()
