@@ -35,7 +35,7 @@ musings = os.listdir(musings_path)
 
 # Import Dataset
 print('Loading musings...')
-df = pd.DataFrame({'content': [open(musings_path + musing).read() for musing in musings]})
+df = pd.DataFrame({'content': [open(musings_path + musing).read() for musing in musings][0:10]})
 
 # Convert to list
 data = df.content.values.tolist()
