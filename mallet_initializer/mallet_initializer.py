@@ -10,7 +10,7 @@ def main():
     bot_path = PATH + bot_name + '/'
 
     try:
-        zip_ref = zipfile.ZipFile(bot_path + bot_name + '_mallet.zip', 'r')
+        zip_ref = zipfile.ZipFile(bot_path + 'mallet/' + bot_name + '_mallet.zip', 'r')
         zip_ref.extractall('/tmp')
         zip_ref.close()
     except IOError:
