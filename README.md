@@ -10,3 +10,6 @@ In each of the folders, we have the following contents:
 * The **web_scrapper** folder contains the web scrapper script that gathers Sam's musings from his website.
 * The **mallet_setup** folder contains the script needed to initialize a given chatbot.
 * The **mallet** folder contains the necessary binaries to run Mallet.
+
+All the scripts are written using Python 2.7 and have not been updated for
+compatability to Python 3.0.
