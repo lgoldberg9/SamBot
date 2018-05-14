@@ -15,11 +15,12 @@ from multiprocessing import Queue, Process, Lock, Condition
 CHATTINESS = 0.8
 INITIAL_CHATTINESS = 0.95
 UI_LOCK = Lock()
-QUEUE_WAIT = Condition()
 message_queue = Queue()
 
 character_directory = {
-    'Sam': ('chatbots/sam/sam_lda_model.mm', 'chatbots/sam/sam_dict.dict', 'chatbots/sam/sam_dominant_topics.csv')
+    'Sam': ('chatbots/sam/sam_lda_model.mm',
+            'chatbots/sam/sam_dict.dict',
+            'chatbots/sam/sam_dominant_topics.csv')
 }
 
 def chatbot_thread(bot_name, lda_path, dict_path, dom_path):
@@ -39,8 +40,6 @@ def chatbot_thread(bot_name, lda_path, dict_path, dom_path):
     while True:
         while message_queue.empty():
             continue
-
-        
         user_message = message_queue.get()
         
         prob_still_chat = min(random(), INITIAL_CHATTINESS)
@@ -58,7 +57,8 @@ def chatbot_thread(bot_name, lda_path, dict_path, dom_path):
 def get_response(message, model, dictionary, dominant_topics, stop_words):
     query_dominant_topic = get_topic_query(message, model, dictionary, stop_words)
     related_sentences = dominant_topics[dominant_topics['Dominant_Topic'] == query_dominant_topic].reset_index(drop=True)
-    return related_sentences.loc[randint(0,len(related_sentences))]['Text']
+    # post_message("Admin", "Possible Responses: {}".format(len(related_sentences)), False)
+    return related_sentences.loc[randint(0, len(related_sentences))]['Text']
     
 def get_topic_query(message, model, dictionary, stop_words):
     lowered_message = message.lower()
@@ -82,15 +82,6 @@ def post_message(username, message, is_bot):
 
 def send_message(message):
     message_queue.put(message)
-    notify_bots()
-
-def notify_bots():
-    QUEUE_WAIT.acquire()
-    try:
-        QUEUE_WAIT.notify_all()
-    except RuntimeError:
-        pass
-    QUEUE_WAIT.release()
 
 def main():
     if len(sys.argv) != 3:

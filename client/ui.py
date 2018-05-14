@@ -1,8 +1,11 @@
 import curses
 import sys
+import os
 
-WIDTH = 78
-CHAT_HEIGHT = 24
+HEIGHT_t, WIDTH_t = (int(x) for x in os.popen('stty size', 'r').read().split())
+
+WIDTH = WIDTH_t - 2
+CHAT_HEIGHT = HEIGHT_t - 5
 INPUT_HEIGHT = 1
 USERNAME_DISPLAY_MAX = 8
 
@@ -14,7 +17,6 @@ messages = [''] * CHAT_HEIGHT
 num_messages = 0
 
 BACKSPACE = 8
-
 
 def ui_init():
     global mainwin
@@ -76,23 +78,16 @@ def ui_add_message(username, message, is_bot):
     # Handle message cases
     if (len(message) > WIDTH - offset):
         messages.insert(0, post_username + message[0:WIDTH - offset])
-        ui_add_message(None, message[(len(message) - (WIDTH - offset)):], is_bot)
+        ui_add_message(None, message[(WIDTH - offset):], is_bot)
     else: 
         messages.insert(0, post_username + message)
-
         [chatwin.addstr(CHAT_HEIGHT - i, 1, messages[i]) for i in range(num_messages)]
 
     chatwin.refresh()
-
-    if is_bot:
-        inputwin.refresh()
-        inputwin.move(y, x)
+    inputwin.refresh()
     
-    if not is_bot:
-        inputwin.refresh()
-
-        # Move cursor to correct location in input box
-        inputwin.move(1, 1)
+    # Move cursor to correct location in input box
+    inputwin.move(1, 1)
     
 def ui_clear_input():
     global inputwin
