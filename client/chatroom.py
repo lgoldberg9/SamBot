@@ -27,18 +27,20 @@ def chatbot_thread(bot_name, lda_path, dict_path, dom_path):
     # Get the stop words
     stop_words = stopwords.words('english')
 
+    # Load pre-trained modules
     lda = LdaMallet.load(lda_path)
     dictionary = Dictionary.load(dict_path)
     dominant_topics = pd.read_csv(dom_path)
 
+    # Announce bots entrance
     post_message(bot_name, "Hello there!", True)
-    
+
+    # Loop forever until program termination
     while True:
-        QUEUE_WAIT.acquire()
         while message_queue.empty():
-            QUEUE_WAIT.wait()
-        QUEUE_WAIT.release()
-            
+            continue
+
+        
         user_message = message_queue.get()
         
         prob_still_chat = min(random(), INITIAL_CHATTINESS)
