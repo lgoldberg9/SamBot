@@ -1,8 +1,11 @@
 import curses
 import sys
+import os
 
-WIDTH = 78
-CHAT_HEIGHT = 24
+HEIGHT_t, WIDTH_t = (int(x) for x in os.popen('stty size', 'r').read().split())
+
+WIDTH = WIDTH_t - 2
+CHAT_HEIGHT = HEIGHT_t - 5
 INPUT_HEIGHT = 1
 USERNAME_DISPLAY_MAX = 8
 
@@ -15,13 +18,10 @@ num_messages = 0
 
 BACKSPACE = 8
 
-
 def ui_init():
     global mainwin
     global chatwin
     global inputwin
-    global messages
-    global num_messages
     # Create the main window
     mainwin = curses.initscr()
     if mainwin == None:
@@ -39,28 +39,23 @@ def ui_init():
     inputwin = mainwin.subwin(INPUT_HEIGHT + 2, WIDTH + 2, CHAT_HEIGHT + 2, 0)
     inputwin.box(0, 0)
 
-    # Refresh the dysplay
+    # Refresh the display
     mainwin.refresh()
 
 def ui_clear_chat():
-    global mainwin
     global chatwin
-    global inputwin
-    global messages
-    global num_messages
     for i in range(WIDTH):
         for j in range(CHAT_HEIGHT):
             chatwin.addch(1 + j, 1 + i, ' ')
 
-def ui_add_message(username, message):
-    global mainwin
+def ui_add_message(username, message, is_bot):
     global chatwin
     global inputwin
     global messages
     global num_messages
 
     ui_clear_chat()
-
+    
     if num_messages == CHAT_HEIGHT:
         messages.pop(num_messages)
     else:
@@ -68,6 +63,7 @@ def ui_add_message(username, message):
 
     offset = 0
 
+    # Handle username cases
     if username == None:
         post_username = '  '
         offset = 2
@@ -78,34 +74,28 @@ def ui_add_message(username, message):
         post_username = username + ': '
         offset = len(username) + len(': ')
 
+    y, x = inputwin.getyx()
+    # Handle message cases
     if (len(message) > WIDTH - offset):
         messages.insert(0, post_username + message[0:WIDTH - offset])
-        ui_add_message(None, message[WIDTH - offset])
+        ui_add_message(None, message[(WIDTH - offset):], is_bot)
     else: 
         messages.insert(0, post_username + message)
-
-        for i in range(num_messages):
-            chatwin.addstr(CHAT_HEIGHT - i, 1, messages[i])
+        [chatwin.addstr(CHAT_HEIGHT - i, 1, messages[i]) for i in range(num_messages)]
 
     chatwin.refresh()
     inputwin.refresh()
     
-def ui_clear_input():
-    global mainwin
-    global chatwin
-    global inputwin
-    global messages
-    global num_messages
+    # Move cursor to correct location in input box
+    inputwin.move(1, 1)
     
-    for i in range(WIDTH):
-        inputwin.addch(1, 1+i, ' ')
+def ui_clear_input():
+    global inputwin
+
+    inputwin.addstr(1, 1, (' ' * WIDTH))
 
 def ui_read_input():
-    global mainwin
-    global chatwin
     global inputwin
-    global messages
-    global num_messages
     
     length = 0
     buffer = ['' for string in range(WIDTH)]
@@ -132,4 +122,4 @@ def ui_read_input():
 
 
 def ui_shutdown():
-    curses.endwin()
+curses.endwin()

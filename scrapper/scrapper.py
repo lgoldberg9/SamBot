@@ -2,7 +2,7 @@
 """
 Created on Sun Apr 29 15:33:31 2018
 
-@author: logan
+@author: logan, elizabeth, enrique
 """
 
 from lxml import html
