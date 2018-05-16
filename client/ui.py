@@ -122,4 +122,4 @@ def ui_read_input():
 
 
 def ui_shutdown():
-curses.endwin()
+    curses.endwin()
